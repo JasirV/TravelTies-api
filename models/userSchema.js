@@ -27,8 +27,12 @@ const userSchema=mongoose.Schema({
         type:String,
         min:8,
         require:true
+    },
+    created_at:{
+        type:Date,
+        default:Date.now()
     }
-})
+},{timestamps:true})
 
 
 const user=mongoose.model('user',userSchema);
