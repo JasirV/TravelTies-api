@@ -15,7 +15,10 @@ const PostSchema=new Schema({
     ],
     comment:[
         {type:Schema.Types.ObjectId,ref:'comment'}
-    ]
+    ],
+    location:{
+        type:String
+    }
 },
 {timestamps:true}
 )
