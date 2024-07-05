@@ -67,17 +67,14 @@ const likePost=async(req,res,next)=>{
     const post=await Post.findById(postId)
     if(!post){
         throw createError("Something went to wrong post not get")
-    }if(post.likes.includes(userId)){
-        throw createError ('User has already like this post')
-    }
-    const index =Post.likes.findIndex((ui)=>String(ui)===String(userId))
-    if(index===-1){
-        post.likes.push(userId)
+    }const isLiked=post.like.includes(userId);
+    if(isLiked){
+        post.like=post.like.filter((pl)=>String(pl)!==String(userId))
     }else{
-        post.likes=post.likes.filter((pl)=>String(pl)!==String(userId))
+        post.like.push(userId)
     }
     const updatedPost=await Post.findByIdAndUpdate(
-        postId,{like:post.likes},
+        postId,{like:post.like},
         {new:true}
     )
     res.status(200).json({
@@ -91,5 +88,15 @@ const likePost=async(req,res,next)=>{
     }
     
 }
-
-module.exports={createPost,getPost,likePost}
+const deletePost=async (req,res,next)=>{
+    const {postId}=req.params;
+    const deleted=await Post.findByIdAndDelete(postId)
+    if(!deleted){
+        throw createError('somthing went to worong ')
+    }
+    return res.status(200).json({
+        status:'success',
+        message:'successfully Deleted'
+    })
+}
+module.exports={createPost,getPost,likePost,deletePost}

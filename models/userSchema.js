@@ -18,6 +18,8 @@ const userSchema=mongoose.Schema({
     profile_pic:{
         type:String,
         require:false
+    },bio:{
+        type:String
     },
     interested_countries:{
         type: [String],
