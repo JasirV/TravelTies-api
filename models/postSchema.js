@@ -18,6 +18,10 @@ const PostSchema=new Schema({
     ],
     location:{
         type:String
+    },
+    createdAt:{
+        type:Date,
+        default:Date.now()
     }
 },
 {timestamps:true}

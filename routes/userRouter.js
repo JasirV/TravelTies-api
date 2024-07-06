@@ -4,6 +4,8 @@ const userController=require('../controllers/userController')
 
 
 userRouter.get('/',userController.getusers)
-
-
-module.exports=userRouter
+.put('/',userController.updateUser)
+.patch('/:userId/',userController.updateCountries)
+  
+ 
+module.exports=userRouter    

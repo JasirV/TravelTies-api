@@ -26,8 +26,9 @@ try {
 
 const getPost=async(req,res,next)=>{
     try {
+        console.log(req.query);
         const filter=req.query.filter
-        const data=req.query.value
+        const data=req.query.search
         const page =req.query.page||1
         const limit = 1
         const starting=(page-1)*limit
@@ -36,15 +37,25 @@ const getPost=async(req,res,next)=>{
         let totalpage
         let totalLength
         let filterCriteria;
+        let sortCriteria;
         if(data){
-        totalLength =await Post.find()
-        posts=await Post.find().limit(limit).skip(starting).sort(filterCriteria).populate('user_id')
-        totalpage=Math.ceil(totalLength.length/limit);
-        }else{
-            totalLength =await Post.find({ status: data });
-            posts=await Post.find({status:data}).limit(limit).skip(starting).sort(filterCriteria).populate('user_id')
-            totalpage=Math.ceil(totalLength.length/limit);
+            filterCriteria = { $or: [{ description: new RegExp(search, 'i') }, { location: new RegExp(search, 'i') }] };
+        }else if(filter){
+        switch (filter) {
+        case 'dfl':
+        sortCriteria = { createdAt: 1 };
+        break;
+        case 'dlf':
+        sortCriteria = { createdAt: -1 };
+        break;
+        default:
+        sortCriteria = { createdAt: -1 };
+        break;
         }
+        }
+        totalLength =await Post.find(filterCriteria)
+        posts=await Post.find(filterCriteria).limit(limit).skip(starting).sort(sortCriteria).populate('user_id')
+        totalpage=Math.ceil(totalLength.length/limit);
         if(!posts){
             throw createError('Error in Fetching Post error is')
         }
@@ -99,4 +110,5 @@ const deletePost=async (req,res,next)=>{
         message:'successfully Deleted'
     })
 }
+
 module.exports={createPost,getPost,likePost,deletePost}
