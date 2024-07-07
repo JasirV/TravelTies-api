@@ -4,13 +4,14 @@ const createError =require('../utils/errorUtils')
 const createPost=async (req,res,next)=>{
 try {
     const{user_id}=req.body
-    const {description,image}=req.body
+    const {description,image,selectLocation}=req.body
     if(!description){
         throw createError("You must provide a description")
     }
     const post =await Post.create({
         user_id,
         description,
+        location:selectLocation,
         image
     })
     res.status(200).json({
@@ -37,9 +38,9 @@ const getPost=async(req,res,next)=>{
         let totalpage
         let totalLength
         let filterCriteria;
-        let sortCriteria;
+        let sortCriteria; 
         if(data){
-            filterCriteria = { $or: [{ description: new RegExp(search, 'i') }, { location: new RegExp(search, 'i') }] };
+            filterCriteria = { $or: [{ description: new RegExp(data, 'i') }, { location: new RegExp(data, 'i') }] };
         }else if(filter){
         switch (filter) {
         case 'dfl':
@@ -53,12 +54,19 @@ const getPost=async(req,res,next)=>{
         break;
         }
         }
+        if(filterCriteria||sortCriteria){
         totalLength =await Post.find(filterCriteria)
         posts=await Post.find(filterCriteria).limit(limit).skip(starting).sort(sortCriteria).populate('user_id')
         totalpage=Math.ceil(totalLength.length/limit);
+        }else{
+            totalLength=await Post.find()
+            posts=await Post.find().limit(limit).skip(starting).populate('user_id')
+            totalpage=Math.ceil(totalLength.length/limit); 
+        }
         if(!posts){
             throw createError('Error in Fetching Post error is')
         }
+        console.log(posts);
         return res.status(200).json({
             status:'success',
             message:'successfully fetch data',
