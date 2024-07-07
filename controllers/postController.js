@@ -31,7 +31,7 @@ const getPost=async(req,res,next)=>{
         const filter=req.query.filter
         const data=req.query.search
         const page =req.query.page||1
-        const limit = 1
+        const limit = 5
         const starting=(page-1)*limit
         const end=page*limit
         let posts
