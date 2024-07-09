@@ -1,6 +1,8 @@
 const Post = require('../models/postSchema')
 const createError =require('../utils/errorUtils')
-
+const Notification =require('../models/notificationSchema')
+const User=require('../models/userSchema')
+const { sendNotification } = require('../socket/socket')
 const createPost=async (req,res,next)=>{
 try {
     const{user_id}=req.body
@@ -14,6 +16,20 @@ try {
         location:selectLocation,
         image
     })
+    const user=await User.findById(user_id)
+    const receivedData = await User.find({ _id: user_id }, { _id: 0 });
+    const notificationData={
+        senderId:user_id,
+        receivedId:receivedData,
+        message:`New Post ${user.first_name,user.last_name}`
+    }
+    const newNotification =new Notification(notificationData)
+    const savedNotification=await newNotification.save()
+    console.log(sendNotification,'find picode');
+    sendNotification(receivedData,savedNotification)
+    if(post){
+        throw createError('Something went wrong',"validationError")
+    }
     res.status(200).json({
         status:'success',
         message:'Post created successfully',
@@ -83,6 +99,20 @@ const likePost=async(req,res,next)=>{
     const {userId}=req.body
     const {postId}=req.params;
     const post=await Post.findById(postId)
+    const user=await User.findById(userId)
+    const receivedData = await User.find({ _id: post.user_id });
+    const notificationData={
+        senderId:userId,
+        receivedId:receivedData,
+        message:`like Post  ${user.first_name,user.last_name}`
+    }
+    const newNotification =new Notification(notificationData)
+    const savedNotification=await newNotification.save()
+    console.log(sendNotification,'find picode');
+    sendNotification(receivedData,savedNotification)
+    if(post){
+        throw createError('Something went wrong',"validationError")
+    }
     if(!post){
         throw createError("Something went to wrong post not get")
     }const isLiked=post.like.includes(userId);
