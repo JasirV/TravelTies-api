@@ -10,7 +10,7 @@ const registerUser=async(req,res,next)=>{
         if(existingUser){
             throw new Error('Email alrady exists')
         }
-        
+        console.log(password);
         const hashPassword=await hashing(password)
         console.log(hashPassword);
         const datas={

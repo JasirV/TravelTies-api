@@ -5,6 +5,6 @@ const { verifyToken } = require('../middlewares/verificationToken');
 
 postRouter.post('/',verifyToken,postController.createPost)
 .get('/',postController.getPost)
-.post('/:postId/',verifyToken,postController.likePost)
+.post('/:postId',postController.likePost)
 .delete('/:postId',verifyToken,postController.deletePost)
 module.exports=postRouter

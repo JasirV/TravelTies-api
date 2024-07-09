@@ -5,6 +5,7 @@ const createError = require("../utils/errorUtils");
 const createComments=async (req,res,next)=>{
     try {
         const {comment,from,userId}=req.body
+        console.log(userId);
         const {postId} =req.params
         if(!comment){
             throw createError('Comment is required')
@@ -49,7 +50,7 @@ const replayComments=async (req,res,next)=>{
 }
 const getComments=async(req,res,next)=>{
     try {
-        const {postId}=req.params;
+        const {postId}=req.params
         const postComments=await Comment.find({post_id:postId}).populate({path:"replies",populate:{path:"user_id",select:'first_name last_name profile_pic'}}).populate({path:'user_id',select:"first_name last_name profile_pic"}).sort({_id:-1})
         if(!postComments){
             throw createError("Something worng")

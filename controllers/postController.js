@@ -19,7 +19,7 @@ try {
         message:'Post created successfully',
         data:post
     })
-} catch (error) {
+} catch (error) { 
     next(error);
     console.error("Error is creatPosting",error.message);
 }
@@ -66,7 +66,6 @@ const getPost=async(req,res,next)=>{
         if(!posts){
             throw createError('Error in Fetching Post error is')
         }
-        console.log(posts);
         return res.status(200).json({
             status:'success',
             message:'successfully fetch data',
